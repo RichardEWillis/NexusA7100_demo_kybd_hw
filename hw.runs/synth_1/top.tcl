@@ -4,7 +4,7 @@
 
 set TIME_start [clock seconds] 
 namespace eval ::optrace {
-  variable script "/home/ciprian/Documents/Github/Nexys-A7/hw/proj/hw.runs/synth_1/top.tcl"
+  variable script "/home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.runs/synth_1/top.tcl"
   variable category "vivado_synth"
 }
 
@@ -70,29 +70,28 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
-set_param chipscope.maxJobs 3
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7a100tcsg324-1
 
 set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
-set_property webtalk.parent_dir /home/ciprian/Documents/Github/Nexys-A7/hw/proj/hw.cache/wt [current_project]
-set_property parent.project_path /home/ciprian/Documents/Github/Nexys-A7/hw/proj/hw.xpr [current_project]
+set_property webtalk.parent_dir /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.cache/wt [current_project]
+set_property parent.project_path /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.xpr [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
 set_property board_part digilentinc.com:nexys-a7-100t:part0:1.0 [current_project]
-set_property ip_repo_paths /home/ciprian/Documents/Github/Nexys-A7/hw/repo [current_project]
+set_property ip_repo_paths /home/repo [current_project]
 update_ip_catalog
-set_property ip_output_repo /home/ciprian/Documents/Github/Nexys-A7/hw/proj/cache [current_project]
+set_property ip_output_repo /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
 read_verilog -library xil_defaultlib {
-  /home/ciprian/Documents/Github/Nexys-A7/hw/src/hdl/PS2Receiver.v
-  /home/ciprian/Documents/Github/Nexys-A7/hw/src/hdl/Seg_7_Display.v
-  /home/ciprian/Documents/Github/Nexys-A7/hw/src/hdl/debouncer.v
-  /home/ciprian/Documents/Github/Nexys-A7/hw/src/hdl/top.v
+  /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.srcs/sources_1/imports/hdl/PS2Receiver.v
+  /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.srcs/sources_1/imports/hdl/Seg_7_Display.v
+  /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.srcs/sources_1/imports/hdl/debouncer.v
+  /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.srcs/sources_1/imports/hdl/top.v
 }
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -103,8 +102,8 @@ OPTRACE "Adding files" END { }
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
-read_xdc /home/ciprian/Documents/Github/Nexys-A7/hw/src/constraints/Nexys-A7-100T-Master.xdc
-set_property used_in_implementation false [get_files /home/ciprian/Documents/Github/Nexys-A7/hw/src/constraints/Nexys-A7-100T-Master.xdc]
+read_xdc /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.srcs/constrs_1/imports/constraints/Nexys-A7-100T-Master.xdc
+set_property used_in_implementation false [get_files /home/vivado/project/nexus_a7_100/demos/NexusA7100_demo_kybd_hw/hw.srcs/constrs_1/imports/constraints/Nexys-A7-100T-Master.xdc]
 
 set_param ips.enableIPCacheLiteLoad 1
 close [open __synthesis_is_running__ w]
@@ -112,6 +111,9 @@ close [open __synthesis_is_running__ w]
 OPTRACE "synth_design" START { }
 synth_design -top top -part xc7a100tcsg324-1 -flatten_hierarchy none -directive RuntimeOptimized -fsm_extraction off
 OPTRACE "synth_design" END { }
+if { [get_msg_config -count -severity {CRITICAL WARNING}] > 0 } {
+ send_msg_id runtcl-6 info "Synthesis results are not added to the cache due to CRITICAL_WARNING"
+}
 
 
 OPTRACE "write_checkpoint" START { CHECKPOINT }
